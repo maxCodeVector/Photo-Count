@@ -1,9 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:photo/photo.dart';
 
 import 'icon_text_button.dart';
 import 'package:photo_manager/photo_manager.dart';
+
+enum PickType{
+  onlyImage,
+  onlyVideo,
+  all
+}
 
 class PickedExample extends StatefulWidget {
   @override
@@ -35,14 +40,14 @@ class _PickedExampleState extends State<PickedExample> {
   }
 
   void _pickAsset() async {
-    final result = await PhotoPicker.pickAsset(
-      context: context,
-      pickedAssetList: picked,
-    );
-    if (result != null && result.isNotEmpty) {
-      picked.clear();
-      picked.addAll(result);
-      setState(() {});
-    }
+//    final result = await PhotoPicker.pickAsset(
+//      context: context,
+//      pickedAssetList: picked,
+//    );
+//    if (result != null && result.isNotEmpty) {
+//      picked.clear();
+//      picked.addAll(result);
+//      setState(() {});
+//    }
   }
 }
