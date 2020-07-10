@@ -105,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _pickAsset(PickType.all),
+        onPressed: () => showAllImage(),
         tooltip: 'pickImage',
         child: Icon(Icons.add),
       ),
@@ -118,6 +118,37 @@ class _MyHomePageState extends State<MyHomePage> {
     _pickAsset(PickType.all, pathList: assetPathList);
   }
 
+  void showAllImage() async{
+    var result = await PhotoManager.requestPermission();
+    if (!result) {
+      // fail
+      /// if result is fail, you can call `PhotoManager.openSetting();`  to open android/ios applicaton's setting to get permission
+      PhotoManager.openSetting();
+      return;
+    }
+    List<AssetPathEntity> pathList = await PhotoManager.getAssetPathList();
+    if(pathList.length==0){
+      showToast("You do not have library");
+    }
+
+    AssetPathEntity firstPath = pathList[0];
+    List<AssetEntity> imageList = await firstPath.getAssetListRange(start: 0, end: 20);
+
+    List<String> r = [];
+    for (var e in imageList) {
+      var file = await e.file;
+      r.add(file.absolute.path);
+    }
+    currentSelected = r.join("\n\n");
+
+    List<AssetEntity> preview = [];
+    preview.addAll(imageList);
+    Navigator.push(context,
+        MaterialPageRoute(builder: (_) => PreviewPage(list: preview)));
+
+    setState(() {});
+  }
+
   void _pickAsset(PickType type, {List<AssetPathEntity> pathList}) async {
     /// context is required, other params is optional.
     /// context is required, other params is optional.
@@ -128,7 +159,7 @@ class _MyHomePageState extends State<MyHomePage> {
     showToast("pick start?");
 
     if (imgList == null || imgList.isEmpty) {
-      showToast("No pick item.");
+      showToast("No picked item.");
       return;
     } else {
       List<String> r = [];
