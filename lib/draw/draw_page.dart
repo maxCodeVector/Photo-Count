@@ -1,17 +1,30 @@
+import 'dart:typed_data';
+
 import 'package:PhotoCount/draw/signature_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 import 'draw_provider.dart';
 
 //绘制布局页面 （ pengzhenkun - 2020.04.30 ）
 class DrawPage extends StatefulWidget {
+  List<AssetEntity> assetList = []; //保存Icon数据
+  final AssetEntity assetEntity;
+
+  DrawPage(this.assetEntity, {Key key, this.assetList}) : super(key: key);
+
   @override
-  _DrawPageState createState() => _DrawPageState();
+  _DrawPageState createState() => _DrawPageState(this.assetEntity);
 }
 
 class _DrawPageState extends State<DrawPage> {
   DrawProvider _provider;
+
+  List<AssetEntity> assetList = []; //保存Icon数据
+  final AssetEntity assetEntity;
+
+  _DrawPageState(this.assetEntity, {List<AssetEntity> assetList});
 
   @override
   void initState() {
@@ -23,7 +36,7 @@ class _DrawPageState extends State<DrawPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("WebSocket Draw"),
+          title: Text("Start counting now!"),
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.call_missed_outgoing),
@@ -44,7 +57,7 @@ class _DrawPageState extends State<DrawPage> {
         body: _buildBody(),
         floatingActionButton: FloatingActionButton(
           onPressed: _provider.clear,
-          tooltip: 'clear',
+          tooltip: 'clear draw',
           child: Icon(Icons.clear),
         ));
   }
@@ -85,9 +98,7 @@ class _DrawPageState extends State<DrawPage> {
           Expanded(
             child: Stack(
               children: [
-                Container(
-                  color: Colors.white,
-                ),
+                _buildImage(),
                 Text(_provider.points.length.toString()),
                 GestureDetector(
                   //手势探测器，一个特殊的widget，想要给一个widge添加手势，直接用这货包裹起来
@@ -110,6 +121,29 @@ class _DrawPageState extends State<DrawPage> {
           _buildPainColor()
         ],
       ),
+    );
+  }
+
+  Widget _buildImage() {
+    return FutureBuilder<Uint8List>(
+      builder: (BuildContext context, snapshot) {
+        if (snapshot.hasData) {
+          return Container(
+            color: Colors.white,
+            child: Image.memory(
+              snapshot.data,
+//                    width: width,
+//                    height: height,
+              fit: BoxFit.cover,
+            ),
+          );
+        } else {
+          return Container(
+            color: Colors.black,
+          );
+        }
+      },
+      future: assetEntity.originBytes,
     );
   }
 

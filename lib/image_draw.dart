@@ -29,6 +29,6 @@ class _ImageDrawState extends State<ImageDraw> {
 
   @override
   Widget build(BuildContext context) {
-    return DrawPage();
+    return DrawPage(this.currEntity);
   }
 }
