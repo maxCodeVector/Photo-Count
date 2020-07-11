@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:PhotoCount/draw/draw_entity.dart';
 
-
 //可选的画板颜色
 Map<String, Color> pintColor = {
   'default': Color(0xFFB275F5),
@@ -26,15 +25,16 @@ Map<String, Color> pintColor = {
   'white': Colors.white,
 };
 
-//数据管理 WebSocket，基础数据，通讯，连接维护等（ pengzhenkun - 2020.04.30 ）
-class DrawProvider with ChangeNotifier {
-  final String _URL = 'ws://10.10.3.55:8080/mini';
-
+class DrawProvider {
   List<List<DrawEntity>> undoPoints = List<List<DrawEntity>>(); // 撤销的数据
   List<List<DrawEntity>> points = List<List<DrawEntity>>(); // 存储要画的数据
   List<DrawEntity> pointsList = List<DrawEntity>(); //预处理的数据，避免绘制时处理卡顿
-  String pentColor = "default";//默认颜色
-  double pentSize = 5;//默认字体大小
+  String pentColor = "default"; //默认颜色
+  double pentSize = 5;
+
+  final void Function() stateCallBack;
+
+  DrawProvider(this.stateCallBack); //默认字体大小
 
   //清除数据
   clear() {
@@ -92,7 +92,6 @@ class DrawProvider with ChangeNotifier {
 
   setState() {
     _update();
-    notifyListeners();
+    this.stateCallBack();
   }
 }
-

@@ -11,11 +11,12 @@ class DrawPage extends StatefulWidget {
 }
 
 class _DrawPageState extends State<DrawPage> {
-  DrawProvider _provider = DrawProvider();
+  DrawProvider _provider;
 
   @override
   void initState() {
     super.initState();
+    _provider = DrawProvider(() => this.setState(() {}));
   }
 
   @override
@@ -43,7 +44,7 @@ class _DrawPageState extends State<DrawPage> {
         body: _buildBody(),
         floatingActionButton: FloatingActionButton(
           onPressed: _provider.clear,
-          tooltip: '',
+          tooltip: 'clear',
           child: Icon(Icons.clear),
         ));
   }
@@ -52,7 +53,7 @@ class _DrawPageState extends State<DrawPage> {
     return InkWell(
       onTap: () {
         drawProvider.pentSize = size;
-        drawProvider.notifyListeners();
+        setState(() {});
       },
       child: Container(
         width: 40,
@@ -105,58 +106,65 @@ class _DrawPageState extends State<DrawPage> {
               ],
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(left: 10, right: 80, bottom: 20),
-            child: Wrap(
-              spacing: 5,
-              runSpacing: 5,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: <Widget>[
-                buildInkWell(_provider, 5),
-                buildInkWell(_provider, 8),
-                buildInkWell(_provider, 10),
-                buildInkWell(_provider, 15),
-                buildInkWell(_provider, 17),
-                buildInkWell(_provider, 20),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 10, right: 80, bottom: 20),
-            child: Wrap(
-              spacing: 5,
-              runSpacing: 5,
-              children: pintColor.keys.map((key) {
-                Color value = pintColor[key];
-                return InkWell(
-                  onTap: () {
-//                          setColor(context, key);
-                    _provider.pentColor = key;
-                    _provider.notifyListeners();
-                  },
-                  child: Container(
-                    width: 32,
-                    height: 32,
-                    color: value,
-                    child: _provider.pentColor == key
-                        ? Icon(
-                            Icons.done,
-                            color: Colors.white,
-                          )
-                        : null,
-                  ),
-                );
-              }).toList(),
-            ),
-          )
+          _buildPainSize(),
+          _buildPainColor()
         ],
+      ),
+    );
+  }
+
+  Widget _buildPainSize() {
+    return Padding(
+      padding: EdgeInsets.only(left: 10, right: 80, bottom: 20),
+      child: Wrap(
+        spacing: 5,
+        runSpacing: 5,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: <Widget>[
+          buildInkWell(_provider, 5),
+          buildInkWell(_provider, 8),
+          buildInkWell(_provider, 10),
+          buildInkWell(_provider, 15),
+          buildInkWell(_provider, 17),
+          buildInkWell(_provider, 20),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPainColor() {
+    return Padding(
+      padding: EdgeInsets.only(left: 10, right: 80, bottom: 20),
+      child: Wrap(
+        spacing: 5,
+        runSpacing: 5,
+        children: pintColor.keys.map((key) {
+          Color value = pintColor[key];
+          return InkWell(
+            onTap: () {
+              _provider.pentColor = key;
+              setState(() {});
+            },
+            child: Container(
+              width: 32,
+              height: 32,
+              color: value,
+              child: _provider.pentColor == key
+                  ? Icon(
+                      Icons.done,
+                      color: Colors.white,
+                    )
+                  : null,
+            ),
+          );
+        }).toList(),
       ),
     );
   }
 
   @override
   void dispose() {
-    _provider.dispose();
+//    _provider.dispose();
     super.dispose();
   }
 }
