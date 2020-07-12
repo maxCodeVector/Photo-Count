@@ -5,9 +5,14 @@ import 'package:photo_manager/photo_manager.dart';
 
 import './preview.dart';
 import 'icon_text_button.dart';
-import 'picked_example.dart';
 
 void main() => runApp(MyApp());
+
+enum PickType{
+  onlyImage,
+  onlyVideo,
+  all
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -98,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
               IconTextButton(
                 icon: CupertinoIcons.reply_all,
                 text: "Picked asset examples.",
-                onTap: () => routePage(PickedExample()),
+                onTap: () => showAllImage(),
               ),
             ],
           ),
