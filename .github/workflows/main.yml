@@ -15,7 +15,7 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: osx
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -36,7 +36,10 @@ jobs:
     # 执行测试
     - run: flutter test
     # 打包 APK
-    - run: flutter build apk --target-platform android-arm,android-arm64,android-x64 --split-per-abi #flutter build apk --release
+    - run: flutter build apk --debug --target-platform android-arm,android-arm64,android-x64 --split-per-abi
+      
+    - run: flutter build ios --debug --no-codesign
+
     # 发布到 Release
     - name: Release apk
       uses: ncipollo/release-action@v1.5.0
