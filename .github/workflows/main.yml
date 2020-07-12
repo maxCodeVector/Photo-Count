@@ -12,7 +12,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  build andriod:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -40,3 +40,51 @@ jobs:
         token: ${{ secrets.RELEASE_TOKEN }}
 
 
+#Build for iOS too (macOS only):
+
+  build ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+      - uses: subosito/flutter-action@v1
+        with:
+          flutter-version: '1.9.1+hotfix.6'
+      - run: flutter pub get
+      - run: flutter test
+#      - run: flutter build apk
+      - run: flutter build ios --debug --no-codesign
+
+      - name: before deploy
+        run: |
+          ls build/ios
+          pushd build/ios/iphoneos
+          mkdir Payload
+          cd Payload
+          ln -s ../Runner.app
+          cd ..
+          zip -r app.ipa Payload
+          popd
+
+      - name: Create a Release IOS IPA
+          uses: ncipollo/release-action@v1
+          with:
+            artifacts: "build/ios/iphoneos/*.ipa"
+            token: ${{ secrets.RELEASE_TOKEN }}
+
+#  Use app bundle, instead of APK:
+#
+#    ```yaml
+#  steps:
+#    - uses: actions/checkout@v1
+#    - uses: actions/setup-java@v1
+#      with:
+#        java-version: '12.x'
+#    - uses: subosito/flutter-action@v1
+#      with:
+#        flutter-version: '1.9.1+hotfix.6'
+#    - run: flutter pub get
+#    - run: flutter test
+#    - run: flutter build appbundle
