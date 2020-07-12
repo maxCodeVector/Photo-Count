@@ -69,10 +69,10 @@ jobs:
           popd
 
       - name: Create a Release IOS IPA
-          uses: ncipollo/release-action@v1
-          with:
-            artifacts: "build/ios/iphoneos/*.ipa"
-            token: ${{ secrets.RELEASE_TOKEN }}
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/ios/iphoneos/*.ipa"
+          token: ${{ secrets.RELEASE_TOKEN }}
 
 #  Use app bundle, instead of APK:
 #
