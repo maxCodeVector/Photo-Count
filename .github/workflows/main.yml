@@ -33,7 +33,7 @@ jobs:
     - run: flutter pub get
     - run: flutter test
     - run: flutter build apk --debug --split-per-abi
-    - run: flutter build ios --debug --no-codesign
+    - run: flutter build ios --debug
 
     - name: before deploy
       run: |
