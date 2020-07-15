@@ -68,24 +68,13 @@ class _InfiniteGridViewState extends State<InfiniteGridView> {
   }
 
   //模拟异步获取数据
-  Future<bool> _retrieveImages() async {
+  void _retrieveImages() async {
     int numCurrentAsset = assetList.length;
-    int endAssetRange = min(numCurrentAsset + 20, assetPathEntity.assetCount);
-    List<AssetEntity> imageList = await assetPathEntity.getAssetListRange(
-        start: numCurrentAsset, end: endAssetRange);
-
-    this.assetList.addAll(imageList);
-    //  Future.delayed(Duration(milliseconds: 200)).then((e) {
-    //    setState(() {
-    //      assetList.addAll([
-    //        Icons.ac_unit,
-    //        Icons.airport_shuttle,
-    //        Icons.all_inclusive,
-    //        Icons.beach_access,
-    //        Icons.cake,
-    //        Icons.free_breakfast
-    //      ]);
-    //    });
-    //  });
+    int endAssetRange = min(numCurrentAsset + 40, assetPathEntity.assetCount);
+    assetPathEntity
+        .getAssetListRange(start: numCurrentAsset, end: endAssetRange)
+        .then((imageList) => setState(() {
+              this.assetList.addAll(imageList);
+            }));
   }
 }
