@@ -8,11 +8,7 @@ import 'icon_text_button.dart';
 
 void main() => runApp(MyApp());
 
-enum PickType{
-  onlyImage,
-  onlyVideo,
-  all
-}
+enum PickType { onlyImage, onlyVideo, all }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -40,6 +36,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String currentSelected = "";
+  List<AssetPathEntity> pathList = [];
 
   @override
   Widget buildBigImageLoading(
@@ -56,8 +53,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
-  Widget buildPreviewLoading(
-      BuildContext context, AssetEntity entity, Color themeColor) {
+  void initState() {
+    super.initState();
+    showAllImage();
+  }
+
+  Widget buildPreviewLoading(BuildContext context) {
     return Center(
       child: Container(
         width: 50.0,
@@ -74,40 +75,9 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        actions: <Widget>[
-          FlatButton(
-            child: Icon(Icons.image),
-            onPressed: _testPhotoListParams,
-          ),
-        ],
       ),
       body: Container(
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              IconTextButton(
-                icon: Icons.photo,
-                text: "photo",
-                onTap: () => _pickAsset(PickType.onlyImage),
-              ),
-              IconTextButton(
-                icon: Icons.videocam,
-                text: "video",
-                onTap: () => _pickAsset(PickType.onlyVideo),
-              ),
-              IconTextButton(
-                icon: Icons.album,
-                text: "all",
-                onTap: () => _pickAsset(PickType.all),
-              ),
-              IconTextButton(
-                icon: CupertinoIcons.reply_all,
-                text: "Picked asset examples.",
-                onTap: () => showAllImage(),
-              ),
-            ],
-          ),
-        ),
+        child: buildAssetPathList(),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => showAllImage(),
@@ -117,13 +87,37 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _testPhotoListParams() async {
-    var assetPathList =
-        await PhotoManager.getAssetPathList(type: RequestType.image);
-    _pickAsset(PickType.all, pathList: assetPathList);
+  Widget buildAssetPathList() {
+    return ListView.builder(
+        padding: const EdgeInsets.all(16.0),
+        // 对于每个建议的单词对都会调用一次itemBuilder，然后将单词对添加到ListTile行中
+        // 在偶数行，该函数会为单词对添加一个ListTile row.
+        // 在奇数行，该函数会添加一个分割线widget，来分隔相邻的词对。
+        // 注意，在小屏幕上，分割线看起来可能比较吃力。
+        itemCount: pathList.length,
+        itemBuilder: (context, i) {
+          // 在每一列之前，添加一个1像素高的分隔线widget
+          if (i.isOdd)
+            return Divider(
+              thickness: 2,
+            );
+
+          final index = i ~/ 2;
+
+          return IconTextButton(
+            icon: Icons.album,
+            text: pathList[index].name +
+                " " +
+                pathList[index].assetCount.toString(),
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => PreviewPage(pathEntity: pathList[index]))),
+          );
+        });
   }
 
-  void showAllImage() async{
+  void showAllImage() async {
     var result = await PhotoManager.requestPermission();
     if (!result) {
       // fail
@@ -131,65 +125,14 @@ class _MyHomePageState extends State<MyHomePage> {
       PhotoManager.openSetting();
       return;
     }
-    List<AssetPathEntity> pathList = await PhotoManager.getAssetPathList();
-    if(pathList.length==0){
+    var pathList = await PhotoManager.getAssetPathList();
+    if (pathList.length == 0) {
       showToast("You do not have library");
-    }
-
-    AssetPathEntity firstPath = pathList[0];
-    List<AssetEntity> imageList = await firstPath.getAssetListRange(start: 0, end: 20);
-
-    List<String> r = [];
-    for (var e in imageList) {
-      var file = await e.file;
-      r.add(file.absolute.path);
-    }
-    currentSelected = r.join("\n\n");
-
-    List<AssetEntity> preview = [];
-    preview.addAll(imageList);
-    Navigator.push(context,
-        MaterialPageRoute(builder: (_) => PreviewPage(list: preview)));
-
-    setState(() {});
-  }
-
-  void _pickAsset(PickType type, {List<AssetPathEntity> pathList}) async {
-    /// context is required, other params is optional.
-    /// context is required, other params is optional.
-    /// context is required, other params is optional.
-
-    List<AssetEntity> imgList = null;
-
-    showToast("pick start?");
-
-    if (imgList == null || imgList.isEmpty) {
-      showToast("No picked item.");
       return;
-    } else {
-      List<String> r = [];
-      for (var e in imgList) {
-        var file = await e.file;
-        r.add(file.absolute.path);
-      }
-      currentSelected = r.join("\n\n");
-
-      List<AssetEntity> preview = [];
-      preview.addAll(imgList);
-      Navigator.push(context,
-          MaterialPageRoute(builder: (_) => PreviewPage(list: preview)));
     }
-    setState(() {});
-  }
 
-  void routePage(Widget widget) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (BuildContext context) {
-          return widget;
-        },
-      ),
-    );
+    setState(() {
+      this.pathList = pathList;
+    });
   }
 }
