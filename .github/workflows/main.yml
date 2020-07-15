@@ -37,7 +37,6 @@ jobs:
 
     - name: before deploy
       run: |
-        ls build/ios
         pushd build/ios/iphoneos
         mkdir Payload
         cd Payload
