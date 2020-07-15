@@ -41,7 +41,7 @@ class _ScrawlState extends State<ScrawlPage> {
     Colors.lightBlueAccent,
     Colors.greenAccent,
   ];
-  static final List<double> lineWidths = [5.0, 8.0, 10.0];
+  static final List<double> lineWidths = [1.0, 3.0, 5.0];
   File imageFile;
   int selectedLine = 0;
   Color selectedColor = colors[0];
