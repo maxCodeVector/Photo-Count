@@ -64,7 +64,6 @@ class AssetImageWidget extends StatelessWidget {
   }
 
   onTap(BuildContext context) {
-    showToast("some one tap me");
     Navigator.push(
       context,
       MaterialPageRoute(

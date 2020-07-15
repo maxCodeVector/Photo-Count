@@ -67,11 +67,6 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Container(
         child: buildAssetPathList(),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => showAllImage(),
-        tooltip: 'pickImage',
-        child: Icon(Icons.add),
-      ),
     );
   }
 
