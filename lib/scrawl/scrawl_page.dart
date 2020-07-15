@@ -3,10 +3,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:oktoast/oktoast.dart';
 import 'package:photo_manager/photo_manager.dart';
 
-import 'file_utils.dart';
 import 'scrawl_painter.dart';
 
 Widget buildImage(AssetEntity assetEntity) {

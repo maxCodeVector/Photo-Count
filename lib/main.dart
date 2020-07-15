@@ -58,18 +58,6 @@ class _MyHomePageState extends State<MyHomePage> {
     showAllImage();
   }
 
-  Widget buildPreviewLoading(BuildContext context) {
-    return Center(
-      child: Container(
-        width: 50.0,
-        height: 50.0,
-        child: CupertinoActivityIndicator(
-          radius: 25.0,
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
