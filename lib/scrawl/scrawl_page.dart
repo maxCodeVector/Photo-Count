@@ -173,6 +173,11 @@ class _ScrawlState extends State<ScrawlPage> {
           onPanEnd: (details) {
             // preparing for next line painting.
 //            points.add(Point(selectedColor, strokeWidth, []));
+            if (points[curFrame].points.length == 0) {
+              print("appear 0 size points, ignore this draw");
+              points.removeLast();
+              return;
+            }
             setState(() {
               curFrame++;
             });
