@@ -21,7 +21,7 @@ Widget buildImage(AssetEntity assetEntity) {
           return Container(child: Container());
         }
       },
-      future: assetEntity.originBytes);
+      future: assetEntity.thumbData);
 }
 
 class ScrawlPage extends StatefulWidget {
@@ -52,7 +52,7 @@ class _ScrawlState extends State<ScrawlPage> {
 
   AssetEntity currAssetEntity;
 
-  Uint8List imageData;
+  File currImageFile;
 
   _ScrawlState(this.currAssetEntity);
 
@@ -65,9 +65,9 @@ class _ScrawlState extends State<ScrawlPage> {
   }
 
   void getImage() async {
-    var currImageData = await this.currAssetEntity.originBytes;
+    var currImageFile = await this.currAssetEntity.file;
     setState(() {
-      this.imageData = currImageData;
+      this.currImageFile = currImageFile;
     });
   }
 
@@ -118,9 +118,9 @@ class _ScrawlState extends State<ScrawlPage> {
                     child: Stack(
                       alignment: Alignment.center,
                       children: <Widget>[
-                        (imageData == null)
+                        (currImageFile == null)
                             ? Container()
-                            : Image.memory(this.imageData),
+                            : Image.file(currImageFile),
                         Positioned(
                           child: _buildCanvas(),
                           top: 0.0,
