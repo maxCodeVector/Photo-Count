@@ -43,7 +43,8 @@ class _ScrawlState extends State<ScrawlPage> {
   File imageFile;
   int selectedLine = 0;
   Color selectedColor = colors[0];
-  List<Point> points = [Point(colors[0], lineWidths[0], [])];
+  List<Point> points = [];
+  List<Point> undoPoints = [];
   int curFrame = 0;
   bool isClear = false;
 
@@ -79,11 +80,29 @@ class _ScrawlState extends State<ScrawlPage> {
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.undo),
-              onPressed: () {},
+              onPressed: () {
+                if (points.length == 0) {
+                  return;
+                }
+                Point p = points.removeLast();
+                undoPoints.add(p);
+                setState(() {
+                  curFrame--;
+                });
+              },
             ),
             IconButton(
               icon: Icon(Icons.redo),
-              onPressed: () {},
+              onPressed: () {
+                if (undoPoints.length == 0) {
+                  return;
+                }
+                Point p = undoPoints.removeLast();
+                points.add(p);
+                setState(() {
+                  curFrame++;
+                });
+              },
             ),
           ],
         ),
@@ -135,6 +154,11 @@ class _ScrawlState extends State<ScrawlPage> {
           onPanStart: (details) {
             // before painting, set color & strokeWidth.
             isClear = false;
+            points.add(Point(selectedColor, strokeWidth, []));
+            // should clear undo points buffer if want to start paining
+            if (undoPoints.length != 0) {
+              undoPoints.clear();
+            }
             points[curFrame].color = selectedColor;
             points[curFrame].strokeWidth = strokeWidth;
           },
@@ -148,7 +172,7 @@ class _ScrawlState extends State<ScrawlPage> {
           },
           onPanEnd: (details) {
             // preparing for next line painting.
-            points.add(Point(selectedColor, strokeWidth, []));
+//            points.add(Point(selectedColor, strokeWidth, []));
             setState(() {
               curFrame++;
             });
@@ -275,6 +299,7 @@ class _ScrawlState extends State<ScrawlPage> {
     isClear = true;
     curFrame = 0;
     points.clear();
-    points.add(Point(selectedColor, strokeWidth, []));
+    undoPoints.clear();
+//    points.add(Point(selectedColor, strokeWidth, []));
   }
 }
