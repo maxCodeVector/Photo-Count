@@ -25,12 +25,15 @@ Widget buildImage(AssetEntity assetEntity) {
 }
 
 class ScrawlPage extends StatefulWidget {
-  final AssetEntity assetEntity;
+  final List<AssetEntity> assetEntityList;
+  final int initialIndex;
 
-  const ScrawlPage(this.assetEntity, {Key key}) : super(key: key);
+  const ScrawlPage(this.assetEntityList, this.initialIndex, {Key key})
+      : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _ScrawlState(this.assetEntity);
+  State<StatefulWidget> createState() =>
+      _ScrawlState(this.assetEntityList, initialIndex);
 }
 
 class _ScrawlState extends State<ScrawlPage> {
@@ -50,11 +53,12 @@ class _ScrawlState extends State<ScrawlPage> {
 
   final GlobalKey _repaintKey = new GlobalKey();
 
-  AssetEntity currAssetEntity;
+  final List<AssetEntity> assetEntityList;
+  int currentIndex;
 
   File currImageFile;
 
-  _ScrawlState(this.currAssetEntity);
+  _ScrawlState(this.assetEntityList, this.currentIndex);
 
   double get strokeWidth => lineWidths[selectedLine];
 
@@ -65,7 +69,7 @@ class _ScrawlState extends State<ScrawlPage> {
   }
 
   void getImage() async {
-    var currImageFile = await this.currAssetEntity.file;
+    var currImageFile = await this.assetEntityList[currentIndex].file;
     setState(() {
       this.currImageFile = currImageFile;
     });
@@ -75,37 +79,7 @@ class _ScrawlState extends State<ScrawlPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text("Start counting now!"),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.undo),
-              onPressed: () {
-                if (points.length == 0) {
-                  return;
-                }
-                Point p = points.removeLast();
-                undoPoints.add(p);
-                setState(() {
-                  curFrame--;
-                });
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.redo),
-              onPressed: () {
-                if (undoPoints.length == 0) {
-                  return;
-                }
-                Point p = undoPoints.removeLast();
-                points.add(p);
-                setState(() {
-                  curFrame++;
-                });
-              },
-            ),
-          ],
-        ),
+        appBar: buildAppBar(),
         body: Container(
           child: Column(
             children: <Widget>[
@@ -138,6 +112,62 @@ class _ScrawlState extends State<ScrawlPage> {
           ),
         ),
       ),
+    );
+  }
+
+  AppBar buildAppBar() {
+    return AppBar(
+      title: Text("To my Melvin"),
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.arrow_upward),
+          onPressed: () {
+            if (currentIndex > 0) {
+              currentIndex--;
+//              currImageFile = null;
+              getImage();
+              reset();
+            }
+          },
+        ),
+        IconButton(
+          icon: Icon(Icons.arrow_downward),
+          onPressed: () {
+            if (currentIndex < this.assetEntityList.length - 1) {
+              currentIndex++;
+//              currImageFile = null;
+              getImage();
+              reset();
+            }
+          },
+        ),
+        IconButton(
+          icon: Icon(Icons.undo),
+          onPressed: () {
+            if (points.length == 0) {
+              return;
+            }
+            Point p = points.removeLast();
+            undoPoints.add(p);
+            setState(() {
+              curFrame--;
+            });
+          },
+        ),
+        IconButton(
+          icon: Icon(Icons.redo),
+          onPressed: () {
+            if (undoPoints.length == 0) {
+              return;
+            }
+            Point p = undoPoints.removeLast();
+            points.add(p);
+            setState(() {
+              curFrame++;
+            });
+          },
+        ),
+      ],
     );
   }
 

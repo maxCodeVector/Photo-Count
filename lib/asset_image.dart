@@ -5,14 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 class AssetImageWidget extends StatelessWidget {
-  final AssetEntity assetEntity;
+  final List<AssetEntity> assetEntityList;
+  final int index;
   final double width;
   final double height;
   final BoxFit boxFit;
 
   const AssetImageWidget({
     Key key,
-    @required this.assetEntity,
+    @required this.assetEntityList,
+    @required this.index,
     this.width,
     this.height,
     this.boxFit,
@@ -20,7 +22,7 @@ class AssetImageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (assetEntity == null) {
+    if (assetEntityList == null) {
       return _buildContainer();
     }
 
@@ -46,7 +48,7 @@ class AssetImageWidget extends StatelessWidget {
           return _buildContainer();
         }
       },
-      future: assetEntity.thumbDataWithSize(
+      future: assetEntityList[index].thumbDataWithSize(
         width.toInt(),
         height.toInt(),
       ),
@@ -67,7 +69,7 @@ class AssetImageWidget extends StatelessWidget {
       context,
       MaterialPageRoute(
         builder: (BuildContext context) {
-          return ScrawlPage(assetEntity);
+          return ScrawlPage(assetEntityList, index);
 //          return ImageDraw(assetEntity);
         },
       ),

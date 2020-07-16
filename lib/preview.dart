@@ -59,7 +59,8 @@ class _InfiniteGridViewState extends State<InfiniteGridView> {
             _retrieveImages();
           }
           return AssetImageWidget(
-            assetEntity: assetList[index],
+            assetEntityList: assetList,
+            index: index,
             width: 200,
             height: 200,
             boxFit: BoxFit.cover,
