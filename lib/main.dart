@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'ImageMarker',
         theme: ThemeData(
-          primarySwatch: Colors.lime,
+          primarySwatch: Colors.cyan,
         ),
         home: MyHomePage(title: 'You better Image Marker'),
       ),

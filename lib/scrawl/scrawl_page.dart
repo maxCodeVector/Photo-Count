@@ -7,22 +7,6 @@ import 'package:photo_manager/photo_manager.dart';
 
 import 'scrawl_painter.dart';
 
-Widget buildImage(AssetEntity assetEntity) {
-  return FutureBuilder<Uint8List>(
-      builder: (BuildContext context, snapshot) {
-        if (snapshot.hasData) {
-          return Container(
-            child: Image.memory(snapshot.data,
-                width: assetEntity.width.toDouble(),
-                height: assetEntity.height.toDouble(),
-                fit: BoxFit.cover),
-          );
-        } else {
-          return Container(child: Container());
-        }
-      },
-      future: assetEntity.thumbData);
-}
 
 class ScrawlPage extends StatefulWidget {
   final List<AssetEntity> assetEntityList;
@@ -124,7 +108,6 @@ class _ScrawlState extends State<ScrawlPage> {
           onPressed: () {
             if (currentIndex > 0) {
               currentIndex--;
-//              currImageFile = null;
               getImage();
               reset();
             }
@@ -135,7 +118,6 @@ class _ScrawlState extends State<ScrawlPage> {
           onPressed: () {
             if (currentIndex < this.assetEntityList.length - 1) {
               currentIndex++;
-//              currImageFile = null;
               getImage();
               reset();
             }
